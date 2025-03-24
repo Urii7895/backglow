@@ -1,0 +1,13 @@
+# Ignorar dependencias
+node_modules/
+
+# Ignorar archivos de entorno
+.env
+
+# Ignorar caché y logs
+*.log
+.cache/
+
+# Ignorar configuración de IDEs (si usas VS Code o WebStorm)
+.vscode/
+.idea/
