@@ -69,7 +69,6 @@ io.on("connection", (socket) => {
   console.log("🟢 Nuevo cliente conectado");
 
   socket.on("sensorData", (data) => {
-    console.log("📱 Datos recibidos:", data);
     io.emit("updateData", data);
   });
 
@@ -78,8 +77,14 @@ io.on("connection", (socket) => {
   });
 });
 
+
+app.get("/", (req, res) => {
+  res.send("✅ Backend corriendo correctamente!");
+});
+
+
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+server.listen(PORT, '0.0.0.0', () => {
+  console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
