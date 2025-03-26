@@ -4,9 +4,7 @@ import { Server } from "socket.io";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import morgan from "morgan"; // Importar morgan
-
-// Importar rutas
+import morgan from "morgan";
 import usuariosRoutes from "./routes/usuariosRoutes.js";
 import plantasRoutes from "./routes/plantasRoutes.js";
 import logrosRoutes from "./routes/logrosRoutes.js";
@@ -14,10 +12,11 @@ import sensoresRoutes from "./routes/sensoresRoutes.js";
 import informacionPlantaRoutes from "./routes/informacionPlantaRoutes.js";
 import requerimientoCuidadoRoutes from "./routes/requerimientoCuidadoRoutes.js";
 import rachaRoutes from "./routes/rachaRoutes.js";
+import nodemailer from 'nodemailer';
 
 dotenv.config();
 
-// Configuración del servidor
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -25,6 +24,7 @@ const io = new Server(server, {
     origin: "*",
   },
 });
+
 
 // Middleware
 app.use(cors({ origin: "*" })); // Permitir peticiones desde cualquier origen
@@ -37,7 +37,6 @@ mongoose
   .then(() => console.log(" Conectado a MongoDB"))
   .catch((error) => console.error(" Error en MongoDB:", error));
 
-// Rutas con prefijo `/api`
 app.use("/api/usuarios", usuariosRoutes);
 app.use("/api/plantas", plantasRoutes);
 app.use("/api/logros", logrosRoutes);
@@ -61,10 +60,6 @@ app.post ('/api/informacion-planta', (req, res) => {
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });
 
-
-
-
-// Socket.io
 io.on("connection", (socket) => {
   console.log("🟢 Nuevo cliente conectado");
 
@@ -76,12 +71,6 @@ io.on("connection", (socket) => {
     console.log(" Cliente desconectado");
   });
 });
-
-
-app.get("/", (req, res) => {
-  res.send("✅ Backend corriendo correctamente!");
-});
-
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
