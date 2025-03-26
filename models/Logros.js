@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
+
 const LogrosSchema = new mongoose.Schema({
-    Nombre: String,
-    Descripcion: String,
-    Tiempo_de_cuidado: Number,
-    id_usuario: { type: String, ref: "Usuarios" },
+    nombre: {type:String, required:true},
+    descripcion:{type:String, required:true},
+    tiempoCuidado:{type:Number, required:true, min:1},
+    id_usuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios",required:true }
   });
   
-  export default mongoose.model("Logros", LogrosSchema);
+export default mongoose.model("Logros", LogrosSchema);

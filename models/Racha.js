@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const RachaSchema = new mongoose.Schema({
     Dias_de_racha: Number,
     id_Usuarios: { type: String, ref: "Usuarios" },
-    id_Planta: { type: String, ref: "Planta" },
+    plantaId: { type: String, ref: "Planta" },
   });
   
   export default mongoose.model("Racha", RachaSchema);
