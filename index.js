@@ -55,7 +55,7 @@ app.post('/api/sensores', (req, res) => {
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });
 
-app.post ('/api/informacion-planta', (req, res) => {
+app.post('/api/informacion-planta', (req, res) => {
   console.log("📥 Datos recibidos:", req.body);
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });

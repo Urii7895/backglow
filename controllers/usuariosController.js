@@ -12,23 +12,24 @@ const transport = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS
   }
 });
+
 export const forgotPassword = async (req, res) => {
-  const {email} = req.body
-  if(!email){
-    return res.status(400).json({message: "Correo electrónico requerido"})
+  const { email } = req.body
+  if (!email) {
+    return res.status(400).json({ message: "Correo electrónico requerido" })
   }
   try {
-    const usuario = await Usuario.findOne({email})
-    if(!usuario){ 
-      return res.status(404).json({message: "Usuario no encontrado"})
+    const usuario = await Usuario.findOne({ email })
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" })
     }
     const resetLink = `http://localhost:4200/reset-password?email=${encodeURIComponent(email)}`;
-    
+
     await transport.sendMail({
       from: '"BrightBloom - GrowGlow" <soporte@brightbloom.com>',
-  to: usuario.email,
-  subject: 'Restablece tu contraseña de GrowGlow',
-  html: `
+      to: usuario.email,
+      subject: 'Restablece tu contraseña de GrowGlow',
+      html: `
     <div style="font-family: 'Arial', sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
       <div style="background-color: #6a1b9a; padding: 20px; text-align: center; border-radius: 8px 8px 0 0;">
         <h1 style="color: white; margin: 0;">BrightBloom</h1>
@@ -68,28 +69,29 @@ export const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Error al enviar el correo" });
-  }}
+  }
+}
 
-  export const resetPassword = async (req, res) => {
-    const { email, password } = req.body;
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email y contraseña son requeridos.' });
+export const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email y contraseña son requeridos.' });
+  }
+  try {
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) {
+      return res.status(404).json({ message: 'Usuario no encontrado.' });
     }
-    try {
-      const usuario = await Usuario.findOne({ email }); 
-      if (!usuario) {
-        return res.status(404).json({ message: 'Usuario no encontrado.' });
-      }
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(password, salt);
-      usuario.password = hashedPassword; 
-      await usuario.save();
-      res.status(200).json({ message: 'Contraseña restablecida correctamente.' });
-    } catch (error) {
-      res.status(500).json({ message: 'Error al restablecer la contraseña.', error: error.message });
-    }
-  };
-  
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+    usuario.password = hashedPassword;
+    await usuario.save();
+    res.status(200).json({ message: 'Contraseña restablecida correctamente.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error al restablecer la contraseña.', error: error.message });
+  }
+};
+
 export const registerUsuario = async (req, res) => {
   try {
     console.log("📌 Recibida petición de registro:", req.body);
@@ -106,9 +108,9 @@ export const registerUsuario = async (req, res) => {
     const token = generarToken(nuevoUsuario._id);
 
     res.status(201).json({
-    message: "Usuario registrado con éxito",
-    usuario: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email },
-    token
+      message: "Usuario registrado con éxito",
+      usuario: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email },
+      token
     });
   } catch (error) {
     console.error("❌ Error en registerUsuario:", error);
@@ -119,7 +121,7 @@ export const registerUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
-    console.log("📌 Recibida petición de login:", req.body); 
+    console.log("📌 Recibida petición de login:", req.body);
     const { email, password } = req.body;
     const usuario = await Usuario.findOne({ email });
     if (!usuario) {
