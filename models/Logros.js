@@ -4,7 +4,7 @@ const LogrosSchema = new mongoose.Schema({
     nombre: {type:String, required:true},
     descripcion:{type:String, required:true},
     tiempoCuidado:{type:Number, required:true, min:1},
-    id_usuario: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios",required:true }
+    usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios",required:true }
   });
   
 export default mongoose.model("Logros", LogrosSchema);

@@ -8,4 +8,4 @@ const SensoresSchema = new mongoose.Schema({
     plataId: { type: mongoose.Schema.Types.ObjectId, ref: "Planta" }
 });
 
-export default mongoose.model("Sensor", SensoresSchema);
+export default mongoose.model("Sensores", SensoresSchema);

@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 import crypto from 'crypto'
 import nodemailer from 'nodemailer';
 
+const generarToken = (idUsuario) => {
+  return jwt.sign({ id: idUsuario }, 'growglow', { expiresIn: '1h' });
+};
+
 const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
@@ -105,6 +109,8 @@ export const registerUsuario = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const nuevoUsuario = new Usuario({ nombre, email, password: hashedPassword });
     await nuevoUsuario.save();
+   
+    
     const token = generarToken(nuevoUsuario._id);
 
     res.status(201).json({
@@ -133,7 +139,8 @@ export const loginUsuario = async (req, res) => {
       console.log("❌ Contraseña incorrecta para:", email);
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
-    const token = jwt.sign({ id: usuario._id }, "secreto", { expiresIn: "1h" });
+    const token = generarToken(usuario._id);
+
     console.log("✅ Usuario autenticado:", usuario);
     res.json({
       token,
