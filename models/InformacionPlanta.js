@@ -7,7 +7,7 @@ const InformacionPlantaSchema = new mongoose.Schema({
     Reino: String,
     Clase: String,
     Diversidad: String,
-    id_Planta: { type: String, ref: "Planta" },
+    plantaId: { type: String, ref: "Planta" },
   });
   
   export default mongoose.model("InformacionPlanta", InformacionPlantaSchema);
