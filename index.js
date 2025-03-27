@@ -12,7 +12,7 @@ import sensoresRoutes from "./routes/sensoresRoutes.js";
 import informacionPlantaRoutes from "./routes/informacionPlantaRoutes.js";
 import requerimientoCuidadoRoutes from "./routes/requerimientoCuidadoRoutes.js";
 import rachaRoutes from "./routes/rachaRoutes.js";
-import nodemailer from 'nodemailer';
+
 
 dotenv.config();
 
@@ -60,19 +60,6 @@ app.post('/api/informacion-planta', (req, res) => {
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });
 
-<<<<<<< HEAD
-app.post ('/api/racha', (req, res) => {
-  console.log("📥 Datos recibidos:", req.body);
-  res.status(200).json({ mensaje: "Datos recibidos con éxito" });
-});
-
-
-
-
-
-// Socket.io
-=======
->>>>>>> origin/Michelle
 io.on("connection", (socket) => {
   console.log("🟢 Nuevo cliente conectado");
 
