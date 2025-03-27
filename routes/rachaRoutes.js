@@ -3,8 +3,13 @@ import { getRachas, createRacha, getRachaByUser } from "../controllers/rachaCont
 
 const router = express.Router();
 
-router.get("/", getRachas); 
-router.get("/:idUsuario", getRachaByUser); // Nueva ruta para obtener la racha por usuario
+// Obtener todas las rachas
+router.get("/", getRachas);
+
+// Obtener la racha de un usuario específico
+router.get("/:idUsuario", getRachaByUser); // Usamos el parámetro idUsuario
+
+// Crear una nueva racha
 router.post("/", createRacha);
 
 export default router;

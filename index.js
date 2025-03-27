@@ -61,6 +61,12 @@ app.post ('/api/informacion-planta', (req, res) => {
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });
 
+app.post ('/api/racha', (req, res) => {
+  console.log("📥 Datos recibidos:", req.body);
+  res.status(200).json({ mensaje: "Datos recibidos con éxito" });
+});
+
+
 
 
 
