@@ -12,8 +12,15 @@ const transport = nodemailer.createTransport({
   host: "sandbox.smtp.mailtrap.io",
   port: 2525,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    user: "1c4ec10d8843f9",
+    pass: "871c99a50bbc3d"
+  }
+});
+transport.verify(function(error, success) {
+  if (error) {
+    console.log("Error al verificar el transporte:", error);
+  } else {
+    console.log("Servidor SMTP configurado correctamente");
   }
 });
 
