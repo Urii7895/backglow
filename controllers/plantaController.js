@@ -1,5 +1,7 @@
 import PlantaDAO from "../dao/plantasDAO.js";
 
+import mongoose from "mongoose";
+
 const obtenerPlanta = async (req, res) => {
   try {
     const planta = await PlantaDAO.getPlantaByUsuario(req.params.usuarioId);

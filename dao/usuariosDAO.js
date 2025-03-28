@@ -1,23 +1,20 @@
-import Usuarios from "../models/Usuarios.js";
-import Racha from "../models/Racha.js";  // Importamos el modelo de Racha
+import Usuario from "../models/Usuarios.js"; // Asegúrate de que el modelo sea de "Usuarios"
 
 export const createUsuario = async (data) => {
   try {
-    // Crear una nueva racha para el usuario
-    const nuevaRacha = new Racha({
-      Dias_de_racha: 0,  // Inicializamos la racha a 0
-    });
-    const rachaGuardada = await nuevaRacha.save();  // Guardamos la racha
-
     // Crear el usuario y asociar la racha
-    const usuario = new Usuarios({
+    const usuario = new Usuario({
       nombre: data.nombre,
       email: data.email,
       password: data.password,
-      id_racha: rachaGuardada._id,  // Asociamos la racha al usuario
+      racha: {  // Definimos el documento embebido de la racha
+        dias_consecutivos: 0,  // Inicializamos la racha a 0
+        ultima_fecha: new Date(),  // Inicializamos con la fecha actual
+      },
     });
 
-    const usuarioGuardado = await usuario.save();  // Guardamos el usuario
+    // Guardamos el usuario
+    const usuarioGuardado = await usuario.save();
     return usuarioGuardado;  // Devolvemos el usuario guardado
   } catch (error) {
     console.error("❌ Error al crear el usuario:", error);

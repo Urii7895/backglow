@@ -3,6 +3,8 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from 'crypto'
 import nodemailer from 'nodemailer';
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
 const generarToken = (idUsuario) => {
   return jwt.sign({ id: idUsuario }, 'growglow', { expiresIn: '1h' });
@@ -94,33 +96,46 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error al restablecer la contraseña.', error: error.message });
   }
-};
-export const registerUsuario = async (req, res) => {
+
+};export const registerUsuario = async (req, res) => {
   try {
     console.log("📌 Recibida petición de registro:", req.body);
     const { nombre, email, password } = req.body;
+    
+    // Verificar si el usuario ya existe
     const usuarioExistente = await Usuario.findOne({ email });
     if (usuarioExistente) {
       console.log("⚠️ Usuario ya registrado:", email);
       return res.status(400).json({ message: "El usuario ya está registrado" });
     }
 
+    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-    const nuevoUsuario = new Usuario({ nombre, email, password: hashedPassword });
+    
+    // Crear el usuario con la racha como subdocumento
+    const nuevoUsuario = new Usuario({ 
+      nombre, 
+      email, 
+      password: hashedPassword,
+      racha: {
+        dias_consecutivos: 0,
+        fecha_ultimo_registro: new Date()
+      }
+    });
+    
     await nuevoUsuario.save();
 
-    // Crear la racha asociada al usuario
-    const nuevaRacha = new Racha({
-      id_Usuarios: nuevoUsuario._id,  // Relacionar la racha con el usuario
-      diasRacha: 0,  // O lo que sea necesario inicializar
-    });
-    await nuevaRacha.save();
-
+    // Generar el token para el usuario
     const token = generarToken(nuevoUsuario._id);
 
     res.status(201).json({
       message: "Usuario registrado con éxito",
-      usuario: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email },
+      usuario: { 
+        id: nuevoUsuario._id, 
+        nombre: nuevoUsuario.nombre, 
+        email: nuevoUsuario.email,
+        racha: nuevoUsuario.racha
+      },
       token
     });
   } catch (error) {
@@ -128,6 +143,7 @@ export const registerUsuario = async (req, res) => {
     res.status(500).json({ message: "Error en el servidor", error: error.message });
   }
 };
+
 export const loginUsuario = async (req, res) => {
   try {
     console.log("📌 Recibida petición de login:", req.body);
@@ -147,7 +163,7 @@ export const loginUsuario = async (req, res) => {
     console.log("✅ Usuario autenticado:", usuario);
     res.json({
       token,
-      usuario: { id: usuario._id, nombre: usuario.nombre, email: usuario.email }
+      usuario: { id: usuario._id, nombre: usuario.nombre, email: usuario.email, id_racha: usuario.racha.id_Usuario },
     });
   } catch (error) {
     console.error("❌ Error en loginUsuario:", error);

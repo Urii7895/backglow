@@ -1,4 +1,5 @@
 import InformacionPlanta from "../models/InformacionPlanta.js";
+import mongoose from "mongoose";
 
 export const getInformacionPlanta = async (req, res) => {
   try {

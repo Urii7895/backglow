@@ -11,7 +11,7 @@ import logrosRoutes from "./routes/logrosRoutes.js";
 import sensoresRoutes from "./routes/sensoresRoutes.js";
 import informacionPlantaRoutes from "./routes/informacionPlantaRoutes.js";
 import requerimientoCuidadoRoutes from "./routes/requerimientoCuidadoRoutes.js";
-import rachaRoutes from "./routes/rachaRoutes.js";
+
 
 
 dotenv.config();
@@ -43,7 +43,7 @@ app.use("/api/logros", logrosRoutes);
 app.use("/api/sensores", sensoresRoutes);
 app.use("/api/informacion-planta", informacionPlantaRoutes);
 app.use("/api/requerimiento-cuidado", requerimientoCuidadoRoutes);
-app.use("/api/racha", rachaRoutes);
+
 
 // Ruta principal
 app.get("/", (req, res) => {

@@ -1,4 +1,5 @@
 import Logros from "../models/Logros.js";
+import mongoose from "mongoose";
 
 export const getLogros = async (req, res) => {
   try {
