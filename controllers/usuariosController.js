@@ -95,7 +95,6 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: 'Error al restablecer la contraseña.', error: error.message });
   }
 };
-
 export const registerUsuario = async (req, res) => {
   try {
     console.log("📌 Recibida petición de registro:", req.body);
@@ -109,8 +108,14 @@ export const registerUsuario = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const nuevoUsuario = new Usuario({ nombre, email, password: hashedPassword });
     await nuevoUsuario.save();
-   
-    
+
+    // Crear la racha asociada al usuario
+    const nuevaRacha = new Racha({
+      id_Usuarios: nuevoUsuario._id,  // Relacionar la racha con el usuario
+      diasRacha: 0,  // O lo que sea necesario inicializar
+    });
+    await nuevaRacha.save();
+
     const token = generarToken(nuevoUsuario._id);
 
     res.status(201).json({
@@ -123,8 +128,6 @@ export const registerUsuario = async (req, res) => {
     res.status(500).json({ message: "Error en el servidor", error: error.message });
   }
 };
-
-
 export const loginUsuario = async (req, res) => {
   try {
     console.log("📌 Recibida petición de login:", req.body);
