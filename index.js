@@ -5,6 +5,8 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import morgan from "morgan";
+import usuariosRoutes from './routes/usuariosRoutes.js'
+
 
 dotenv.config();
 
@@ -27,7 +29,6 @@ mongoose
   .then(() => console.log("Conectado a MongoDB"))
   .catch((error) => console.error("Error en MongoDB:", error));
 
-
 app.post('/api/sensores', (req, res) => {
   const sensorData = req.body;
   console.log("📥 Datos recibidos del ESP32:", sensorData);
@@ -36,6 +37,8 @@ app.post('/api/sensores', (req, res) => {
   
   res.status(200).json({ mensaje: "Datos recibidos con éxito" });
 });
+app.use("/api/usuarios", usuariosRoutes); 
+
 
 
 app.get("/", (req, res) => {

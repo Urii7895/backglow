@@ -6,10 +6,10 @@ import {
   resetPassword,
 } from "../controllers/usuariosController.js";
 
-const router = express.Router();
-router.post("/login", loginUsuario);
-router.post("/register", registerUsuario);
-router.post("/forgot-password", forgotPassword);
-router.post("/reset-password", resetPassword);
+const usuariosRoutes = express.Router();
+usuariosRoutes.post("/login", loginUsuario);
+usuariosRoutes.post("/register", registerUsuario);
+usuariosRoutes.post("/forgot-password", forgotPassword);
+usuariosRoutes.post("/reset-password", resetPassword);
 
-export default router;
+export default usuariosRoutes;
