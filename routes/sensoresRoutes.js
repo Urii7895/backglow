@@ -1,29 +1,31 @@
 import express from "express";
 import { getSensores, createSensor } from "../controllers/sensoresController.js";
+import Sensor from "../models/Sensores.js"; // Importa el modelo de Sensor
 
-const router = express.Router();
+const sensoresRouter = express.Router();
 
-router.get("/", getSensores);
-// routes/sensoresRoutes.js
-import express from 'express';
-import SensorData from '../models/SensorData';
+sensoresRouter.get("/", getSensores);
+sensoresRouter.post("/", createSensor);
 
-router.post('/', async (req, res) => {
+// Nueva ruta para obtener los últimos datos de cada sensor
+sensoresRouter.get("/ultimos", async (req, res) => {
   try {
-    const datos = req.body; // Array de sensores desde el ESP32
-    
-    // Guarda cada sensor en la BD
-    const savedData = await SensorData.insertMany(datos);
-    
-    // Opcional: Emitir por Socket.io
-    req.io.emit('nuevosDatos', savedData);
-    
-    res.status(201).json(savedData);
+    const sensores = await Sensor.aggregate([
+      { $sort: { fecha: -1 } }, // Ordena de más reciente a más antiguo
+      { 
+        $group: { 
+          _id: "$nombre", 
+          valor: { $first: "$valor" }, 
+          unidad: { $first: "$unidad" }, 
+          fecha: { $first: "$fecha" }
+        } 
+      }
+    ]);
+
+    res.json(sensores);
   } catch (error) {
-    res.status(500).json({ error: 'Error al guardar datos' });
+    console.error("❌ Error obteniendo datos de sensores:", error);
+    res.status(500).json({ error: "Error obteniendo datos de sensores" });
   }
 });
-
-
-
-export default router;
+export default sensoresRouter;

@@ -114,7 +114,10 @@
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-      const nuevoUsuario = new Usuario({ nombre, email, password: hashedPassword });
+      const nuevoUsuario = new Usuario({ nombre, email, password: hashedPassword,racha: {
+        dias_consecutivos: 0,
+        fecha_ultimo_registro: new Date()
+      } });
       await nuevoUsuario.save();
     
       
@@ -122,7 +125,7 @@
 
       res.status(201).json({
         message: "Usuario registrado con éxito",
-        usuario: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email },
+        usuario: { id: nuevoUsuario._id, nombre: nuevoUsuario.nombre, email: nuevoUsuario.email ,racha:nuevoUsuario.racha},
         token
       });
     } catch (error) {
@@ -151,7 +154,7 @@
       console.log("✅ Usuario autenticado:", usuario);
       res.json({
         token,
-        usuario: { id: usuario._id, nombre: usuario.nombre, email: usuario.email }
+        usuario: { id: usuario._id, nombre: usuario.nombre, email: usuario.email,id_racha:usuario.racha.id_Usuario }
       });
     } catch (error) {
       console.error("❌ Error en loginUsuario:", error);
