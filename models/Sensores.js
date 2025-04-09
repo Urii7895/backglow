@@ -6,6 +6,8 @@ const SensoresSchema = new mongoose.Schema({
     unidad: { type: String, required: true },
     fecha: { type: Date, default: Date.now },
     plataId: { type: mongoose.Schema.Types.ObjectId, ref: "Planta" }
+
+    
 });
 
 export default mongoose.model("Sensores", SensoresSchema);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const RequerimientoCuidadoSchema = new mongoose.Schema({
     Requerimiento_de_luz: Number,
     Requerimiento_de_temperatura: Number,

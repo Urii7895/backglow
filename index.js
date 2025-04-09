@@ -11,11 +11,9 @@ import logrosRoutes from "./routes/logrosRoutes.js";
 import sensoresRoutes from "./routes/sensoresRoutes.js";
 import informacionPlantaRoutes from "./routes/informacionPlantaRoutes.js";
 import requerimientoCuidadoRoutes from "./routes/requerimientoCuidadoRoutes.js";
-
-
+import Logros from "./models/Logros.js";  // Asegúrate de tener la ruta correcta
 
 dotenv.config();
-
 
 const app = express();
 const server = http.createServer(app);
@@ -25,16 +23,19 @@ const io = new Server(server, {
   },
 });
 
-
 // Middleware
-app.use(cors({ origin: "*" })); // Permitir peticiones desde cualquier origen
-app.use(express.json()); // Permitir recibir JSON en las peticiones
-app.use(morgan('dev')); // Usar morgan para ver las peticiones en la terminal
+app.use(cors({ origin: "*" }));
+app.use(express.json());
+app.use(morgan('dev'));
 
 // Conexión a MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
-  .then(() => console.log(" Conectado a MongoDB"))
+  .then(() => {
+    console.log(" Conectado a MongoDB");
+    // Llamar a la función crearLogroInicial al iniciar el servidor
+    crearLogroInicial();
+  })
   .catch((error) => console.error(" Error en MongoDB:", error));
 
 app.use("/api/usuarios", usuariosRoutes);
@@ -43,7 +44,6 @@ app.use("/api/logros", logrosRoutes);
 app.use("/api/sensores", sensoresRoutes);
 app.use("/api/informacion-planta", informacionPlantaRoutes);
 app.use("/api/requerimiento-cuidado", requerimientoCuidadoRoutes);
-
 
 // Ruta principal
 app.get("/", (req, res) => {
@@ -72,8 +72,28 @@ io.on("connection", (socket) => {
   });
 });
 
+
+
+// Función para crear el logro inicial si no existe
+async function crearLogroInicial() {
+  const logroExistente = await Logros.findOne({ nombre: "Primeros pasos" });
+
+  if (!logroExistente) {
+    await Logros.create({
+      nombre: "Primeros pasos",
+      descripcion: "Comienza tu viaje en GrowGlow.",
+      tiempoCuidado: 1,
+      usuarioId: null,  // No es necesario asignar un valor null si no es obligatorio
+    });
+    console.log("⚠️ Logro 'Primeros pasos' creado automáticamente.");
+  }
+}
+
+
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Servidor corriendo en http://0.0.0.0:${PORT}`);
 });
+
+export { io };

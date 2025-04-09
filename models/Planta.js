@@ -1,18 +1,13 @@
 import mongoose from "mongoose";
 
-const PlantaSchema = new mongoose.Schema({
-  usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios", required: true },
-  nombre: { type: String, required: true },
-  estado: {
-    type: String,
-    required: true,
-    enum: ["Saludable", "Riesgo", "Crítico"],
-    default: "Crítico"
+const PlantasSchema = new mongoose.Schema({
+  id_Planta: { 
+    type: mongoose.Schema.Types.ObjectId, 
+    unique: true, 
+    default: () => new mongoose.Types.ObjectId()  // Esta es la única línea modificada
   },
-  fechaAdquisicion: { type: Date, default: Date.now },
-  ultimaActividad: { type: Date, default: Date.now },
-  diasConsecutivos: { type: Number, default: 0 },
-  logroId: { type: mongoose.Schema.Types.ObjectId, ref: "Logros", required: true }
+  usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: "Usuarios", required: true },
+  // Agrega otros campos necesarios
 });
 
-export default mongoose.model("Planta", PlantaSchema);
+export default mongoose.model("Plantas", PlantasSchema);
