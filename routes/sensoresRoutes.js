@@ -1,31 +1,9 @@
-import express from "express";
-import { getSensores, createSensor } from "../controllers/sensoresController.js";
-import Sensor from "../models/Sensores.js"; // Importa el modelo de Sensor
+import express from 'express';
+import SensoresController from '../controllers/sensoresController.js';
 
-const sensoresRouter = express.Router();
+const router = express.Router();
 
-sensoresRouter.get("/", getSensores);
-sensoresRouter.post("/", createSensor);
+router.post('/', SensoresController.crearSensores);
+router.get('/ultimos', SensoresController.obtenerUltimosDatos);
 
-// Nueva ruta para obtener los últimos datos de cada sensor
-sensoresRouter.get("/ultimos", async (req, res) => {
-  try {
-    const sensores = await Sensor.aggregate([
-      { $sort: { fecha: -1 } }, // Ordena de más reciente a más antiguo
-      { 
-        $group: { 
-          _id: "$nombre", 
-          valor: { $first: "$valor" }, 
-          unidad: { $first: "$unidad" }, 
-          fecha: { $first: "$fecha" }
-        } 
-      }
-    ]);
-
-    res.json(sensores);
-  } catch (error) {
-    console.error("❌ Error obteniendo datos de sensores:", error);
-    res.status(500).json({ error: "Error obteniendo datos de sensores" });
-  }
-});
-export default sensoresRouter;
+export default router;

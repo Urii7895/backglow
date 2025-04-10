@@ -19,11 +19,16 @@ const io = new Server(server, {
   },
 });
 
+
 // Middleware
 app.use(cors({ origin: "*" })); 
 app.use(express.json());
 app.use(morgan("dev")); 
-
+app.use((req, res, next) => {
+  req.io = io; 
+  next();
+}
+);
 // Conexión a MongoDB
 mongoose
   .connect(process.env.MONGO_URI)
@@ -33,9 +38,10 @@ mongoose
 
 app.use("/api/sensores", sensoresRouter);
 app.post('/api/sensores', (req, res) => {
-    console.log("📥 Datos recibidos:", req.body);
-    res.status(200).json({ mensaje: "Datos recibidos con éxito" });
-  });
+  console.log("📡 Datos recibidos del dispositivo:", req.body);
+  io.emit("actualizarSensores", JSON.stringify(req.body)); // Reenvía via sockets
+  res.status(200).json({ success: true });
+});
 app.use("/api/usuarios", usuariosRoutes); 
 
 
@@ -48,8 +54,17 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   console.log("🟢 Nuevo cliente conectado");
 
-  socket.on("sensorData", (data) => {
-    io.emit("updateData", data);
+  socket.on("datosSensores", (data) => {
+    // Procesa y reenvía a todos los clientes
+    const datosFormateados = {
+      temperatura_suelo: data.temperaturaSuelo || 22, 
+      temperatura_aire: data.temperaturaAire || 25,
+      humedad_aire: data.humedad || 60,
+      luz: data.luz || 300
+    };
+    console.log('Emitiendo datos:', lastData); 
+req.io.emit('actualizarSensores', JSON.stringify(lastData));
+    io.emit("actualizarSensores", JSON.stringify(datosFormateados));
   });
 
   socket.on("disconnect", () => {

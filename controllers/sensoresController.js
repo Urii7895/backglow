@@ -1,27 +1,39 @@
-import Sensores from "../models/Sensores.js";
+import SensoresDAO from '../dao/sensoresDAO.js';
 
-export const getSensores = async (req, res) => {
-    try {
-        const sensores = await Sensores.find();
-        res.json(sensores);
-    } catch (error) {
-        console.error("Error obteniendo sensores:", error);
-        res.status(500).json({ message: error.message });
-    }
-};
-
-export const createSensor = async (req, res) => {
-    try {
-        const sensores = req.body; // Recibir un array de sensores
-
-        if (!Array.isArray(sensores)) {
-            return res.status(400).json({ message: "Se esperaba un array de sensores" });
+export default class SensoresController {
+    static async crearSensores(req, res, next) {
+        try {
+            const datosArray = req.body; // Recibe el array completo
+    
+            // Validación básica
+            if (!Array.isArray(datosArray)) { // Corregido el paréntesis de cierre
+                return res.status(400).json({ error: "Se esperaba un array de datos" });
+            }
+    
+            const savedData = await SensoresDAO.crearMultipleSensores(datosArray);
+            
+            // Emitir el último conjunto de datos
+            if (req.io) {
+                const lastData = savedData.slice(-4); // Últimos 4 registros (uno por sensor)
+                req.io.emit('actualizarSensores', JSON.stringify(lastData));
+            }
+    
+            res.status(201).json(savedData);
+        } catch (error) {
+            next(error);
         }
+    }
 
-        const nuevosSensores = await Sensores.insertMany(sensores);
-        res.status(201).json(nuevosSensores);
-    } catch (error) {
-        console.error("Error guardando sensores:", error);
-        res.status(400).json({ message: error.message });
+    static async obtenerUltimosDatos(req, res, next) {
+        try {
+            const result = await SensoresDAO.obtenerUltimosDatos();
+            const formattedData = {};
+            result.forEach(item => {
+                formattedData[item._id] = item.valor;
+            });
+            res.json(formattedData);
+        } catch (error) {
+            next(error);
+        }
     }
 }
