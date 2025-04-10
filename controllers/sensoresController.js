@@ -12,10 +12,15 @@ export const getSensores = async (req, res) => {
 export const createSensor = async (req, res) => {
     console.log("📥 Datos recibidos:", req.body);
     try {
+        // Verifica si req.body es un array
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({ message: "Se esperaba un array de sensores" });
+        }
+
         const sensores = req.body.map(sensor => ({
-            nombre: sensor.nombre || 'nombre_default',  // Agrega un nombre si no lo tiene
-            valor: sensor.valor || 0,                    // Agrega un valor por defecto
-            unidad: sensor.unidad || 'default',          // Agrega una unidad por defecto
+            nombre: sensor.nombre,
+            valor: sensor.valor,
+            unidad: sensor.unidad,
             fecha: new Date()
         }));
 
@@ -26,3 +31,32 @@ export const createSensor = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 }
+// Actualizar un sensor por su ID
+export const updateSensor = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const sensorActualizado = await Sensores.findByIdAndUpdate(id, req.body, { new: true });
+      if (!sensorActualizado) {
+        return res.status(404).json({ message: "Sensor no encontrado" });
+      }
+      res.json(sensorActualizado);
+    } catch (error) {
+      console.error("❌ Error actualizando el sensor:", error);
+      res.status(400).json({ error: "Error actualizando el sensor" });
+    }
+  };
+ // Eliminar un sensor por su ID
+export const deleteSensor = async (req, res) => {
+    try {
+      const { id } = req.params;  // Obtener el ID de la URL
+      const sensorEliminado = await Sensores.findByIdAndDelete(id);
+      if (!sensorEliminado) {
+        return res.status(404).json({ message: "Sensor no encontrado" });
+      }
+      res.json({ message: "Sensor eliminado exitosamente" });
+    } catch (error) {
+      console.error("❌ Error eliminando el sensor:", error);
+      res.status(400).json({ error: "Error eliminando el sensor" });
+    }
+  };
+  

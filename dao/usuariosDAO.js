@@ -7,10 +7,6 @@ export const createUsuario = async (data) => {
       nombre: data.nombre,
       email: data.email,
       password: data.password,
-      racha: {  // Definimos el documento embebido de la racha
-        dias_consecutivos: 0,  // Inicializamos la racha a 0
-        ultima_fecha: new Date(),  // Inicializamos con la fecha actual
-      },
     });
 
     // Guardamos el usuario

@@ -210,3 +210,50 @@ export const getUsuarioById = async (req, res) => {
     res.status(500).json({ message: "Error al obtener usuario", error });
   }
 };
+
+// Obtener todos los usuarios
+export const getUsuarios = async (req, res) => {
+  try {
+    const usuarios = await Usuario.find().select('-password'); // no mandamos el hash
+    res.json(usuarios);
+  } catch (error) {
+    res.status(500).json({ message: "Error al obtener usuarios", error });
+  }
+};
+
+// Actualizar usuario
+export const updateUsuario = async (req, res) => {
+  const { id } = req.params;
+  const { nombre, email } = req.body;
+
+  try {
+    const usuario = await Usuario.findById(id);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    usuario.nombre = nombre || usuario.nombre;
+    usuario.email = email || usuario.email;
+
+    const usuarioActualizado = await usuario.save();
+    res.json(usuarioActualizado);
+  } catch (error) {
+    res.status(500).json({ message: "Error al actualizar usuario", error });
+  }
+};
+
+// Eliminar usuario
+export const deleteUsuario = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const usuario = await Usuario.findByIdAndDelete(id);
+    if (!usuario) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    res.json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    res.status(500).json({ message: "Error al eliminar usuario", error });
+  }
+};
