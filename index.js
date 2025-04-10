@@ -12,6 +12,8 @@ import sensoresRoutes from "./routes/sensoresRoutes.js";
 import informacionPlantaRoutes from "./routes/informacionPlantaRoutes.js";
 import requerimientoCuidadoRoutes from "./routes/requerimientoCuidadoRoutes.js";
 import Logros from "./models/Logros.js";  // Asegúrate de tener la ruta correcta
+import rachaRoutes from "./routes/rachaRoutes.js";
+ // Importa todo el espacio de nombres
 
 dotenv.config();
 
@@ -44,6 +46,7 @@ app.use("/api/logros", logrosRoutes);
 app.use("/api/sensores", sensoresRoutes);
 app.use("/api/informacion-planta", informacionPlantaRoutes);
 app.use("/api/requerimiento-cuidado", requerimientoCuidadoRoutes);
+app.use("/api/racha", rachaRoutes);
 
 // Ruta principal
 app.get("/", (req, res) => {
@@ -63,6 +66,11 @@ app.post('/api/informacion-planta', (req, res) => {
 io.on("connection", (socket) => {
   console.log("🟢 Nuevo cliente conectado");
 
+  // Emitir un mensaje de prueba
+  socket.emit("notificacion", {
+    mensaje: "Notificación de prueba para verificar que Socket.io está funcionando."
+  });
+
   socket.on("sensorData", (data) => {
     io.emit("updateData", data);
   });
@@ -71,7 +79,6 @@ io.on("connection", (socket) => {
     console.log(" Cliente desconectado");
   });
 });
-
 
 
 // Función para crear el logro inicial si no existe

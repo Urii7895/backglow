@@ -55,12 +55,16 @@ export const registerUsuario = async (req, res) => {
       tiempoCuidado: 1, // por tu esquema min:1
       usuarioId: nuevoUsuario._id,
     });
-    // Crear la racha asociada al usuario
-    const nuevaRacha = new Racha({
-      usuarioId: nuevoUsuario._id,
-      racha: 0, // Racha inicial en 0
-    });
-    await nuevaRacha.save();
+ // Crear la racha asociada al usuario
+const nuevaRacha = new Racha({
+  usuarioId: nuevoUsuario._id,
+  fechaInicio: new Date(),
+  fechaFin: null,
+  diasConsecutivos: 0,
+  totalDias: 0
+});
+await nuevaRacha.save();
+
     // Generar token
     const token = generarToken(nuevoUsuario._id);    res.status(201).json({
       message: "Usuario registrado con éxito",
